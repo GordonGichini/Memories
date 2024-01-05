@@ -1,0 +1,52 @@
+﻿
+@page "/memories"
+@inject Services.IMemoryService MemoryService
+@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager
+
+<h3>Memories List</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Date</th>
+            <th>Location</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var memory in MemoryService.GetMemories())
+        {
+            <tr>
+                <td>@memory.Name</td>
+                <td>@memory.Description</td>
+                <td>@memory.Date.ToShortDateString()</td>
+                <td>@memory.Location</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="() => EditMemory(memory.Id)">Edit</button>
+                    <button class="btn btn-danger" @onclick="() => DeleteMemory(memory.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<MemoryForm OnSaveMemory="SaveMemory" />
+
+@code {
+    private void EditMemory(int id)
+    {
+        NavigationManager.NavigateTo($"/memoryform/{id}");
+    }
+
+    private void DeleteMemory(int id)
+    {
+        MemoryService.DeleteMemory(id);
+    }
+
+    private void SaveMemory()
+    {
+        StateHasChanged();
+    }
+}
